@@ -6,7 +6,7 @@
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-7">
-        <div class="hero-badge" style="animation:none;"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Powered by Google Gemini AI</div>
+        <div class="hero-badge" style="animation:none;"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Powered by AI</div>
         <h1 class="mt-2">Generate Your Resume<br>in <span style="color:var(--saffron)">30 Seconds</span></h1>
         <p style="color:var(--muted);font-size:1.05rem;max-width:520px;margin-top:1rem;">Tell us your role, skills, and experience. Our AI crafts a complete, professional resume draft — ready to download as PDF.</p>
       </div>
@@ -26,7 +26,7 @@
       <div class="col-lg-6">
         <div class="rf-card ai-glow">
           <h4 style="margin-bottom:0.3rem;"><i class="fa-solid fa-sliders text-saffron me-2"></i>Configure Your Resume</h4>
-          <p style="color:var(--muted);font-size:0.82rem;margin-bottom:1.5rem;">Fill in a few fields and let Gemini AI do the heavy lifting.</p>
+          <p style="color:var(--muted);font-size:0.82rem;margin-bottom:1.5rem;">Fill in a few fields and let AI do the heavy lifting.</p>
           <form method="post">
             {% csrf_token %}
             <div class="mb-3">
@@ -77,14 +77,13 @@
           </form>
         </div>
       </div>
+
       <div class="col-lg-6">
         <div style="position:sticky;top:100px;">
           <div class="rf-card" style="margin-bottom:1.5rem;">
             <h5><i class="fa-solid fa-bolt text-saffron me-2"></i>What AI Generates</h5>
             <ul style="list-style:none;padding:0;margin:0.5rem 0 0;">
-                {% for item in items %}
-<li>{{ item }}</li>
-{% endfor %}
+              {% for item in items %}
               <li style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
                 <i class="fa-solid fa-check-circle" style="color:#48c78e;font-size:0.9rem;"></i>
                 <span style="color:var(--muted);font-size:0.88rem;">{{ item }}</span>
@@ -92,6 +91,7 @@
               {% endfor %}
             </ul>
           </div>
+
           <div class="rf-card" style="background:rgba(245,166,35,0.05);border:1px solid rgba(245,166,35,0.2);">
             <h5><i class="fa-solid fa-lightbulb text-saffron me-2"></i>Tips for Best Results</h5>
             <ul style="padding-left:1.2rem;color:var(--muted);font-size:0.85rem;margin:0.5rem 0 0;">
@@ -103,15 +103,17 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 {% endblock %}
+
 {% block extra_js %}
 <script>
 document.querySelector('form').addEventListener('submit', function() {
   const btn = document.getElementById('aiSubmitBtn');
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Generating with Gemini AI...';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Generating with AI...';
   btn.disabled = true;
 });
 </script>
