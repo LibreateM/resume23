@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}ATS History – ResumeForge{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div><span class="eyebrow">Your Analysis History</span><h1 class="mt-1">ATS <span style="color:var(--saffron)">Check History</span></h1></div>
+      <a href="{% url 'ats_checker' %}" class="btn btn-rf-primary"><i class="fa-solid fa-plus me-2"></i>New Check</a>
+    </div>
+  </div>
+</section>
+<section class="section-pad-sm">
+  <div class="container">
+    {% if checks %}
+    <div class="rf-card" style="padding:0;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);">
+            <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Resume</th>
+            <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Score</th>
+            <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Status</th>
+            <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Date</th>
+            <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for check in checks %}
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+            <td style="padding:12px 16px;font-size:0.85rem;color:var(--white);">{{ check.resume.title|default:"Manual Check" }}</td>
+            <td style="padding:12px 16px;text-align:center;"><span style="font-size:1.1rem;font-weight:700;color:{% if check.score >= 80 %}#48c78e{% elif check.score >= 60 %}#f5a623{% else %}#ff6b6b{% endif %};">{{ check.score }}<span style="font-size:0.7rem;color:var(--muted);">/100</span></span></td>
+            <td style="padding:12px 16px;"><span style="font-size:0.75rem;padding:3px 10px;border-radius:20px;font-weight:600;background:{% if check.score >= 80 %}rgba(72,199,142,0.12){% elif check.score >= 60 %}rgba(245,166,35,0.12){% else %}rgba(255,107,107,0.1){% endif %};color:{% if check.score >= 80 %}#48c78e{% elif check.score >= 60 %}#f5a623{% else %}#ff6b6b{% endif %};">{{ check.score_label }}</span></td>
+            <td style="padding:12px 16px;font-size:0.82rem;color:var(--muted);">{{ check.created_at|date:"M d, Y H:i" }}</td>
+            <td style="padding:12px 16px;text-align:center;"><a href="{% url 'ats_detail' check.pk %}" class="btn btn-rf-outline btn-sm" style="padding:4px 12px;font-size:0.75rem;">View Report</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="rf-card text-center" style="padding:60px;">
+      <i class="fa-solid fa-chart-bar" style="font-size:3rem;color:var(--muted);margin-bottom:16px;display:block;"></i>
+      <h5 style="color:var(--muted);">No ATS checks yet</h5>
+      <a href="{% url 'ats_checker' %}" class="btn btn-rf-primary mt-3"><i class="fa-solid fa-magnifying-glass-chart me-2"></i>Check My Resume</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

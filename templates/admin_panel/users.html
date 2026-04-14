@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users – Admin{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div><span class="eyebrow">Admin Panel</span><h1 class="mt-1">Manage <span style="color:var(--saffron)">Users</span></h1></div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-rf-outline btn-sm"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section-pad-sm">
+  <div class="container">
+    <div class="rf-card" style="padding:0;overflow:hidden;">
+      <div style="padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:600;">{{ users.count }} Users Total</span>
+        <a href="{% url 'django-admin' %}auth/user/add/" target="_blank" class="btn btn-rf-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>Add User</a>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);">
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">User</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Resumes</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">ATS Checks</th>
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Joined</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Status</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Role</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+              <td style="padding:12px 16px;">
+                <div style="font-size:0.88rem;color:var(--white);font-weight:500;">{{ u.get_full_name|default:u.username }}</div>
+                <div style="font-size:0.75rem;color:var(--muted);">{{ u.email }}</div>
+                <div style="font-size:0.73rem;color:var(--muted);">@{{ u.username }}</div>
+              </td>
+              <td style="padding:12px 16px;text-align:center;font-weight:700;color:var(--saffron);">{{ u.resume_count }}</td>
+              <td style="padding:12px 16px;text-align:center;font-weight:700;color:#7b8cde;">{{ u.ats_count }}</td>
+              <td style="padding:12px 16px;font-size:0.82rem;color:var(--muted);">{{ u.date_joined|date:"M d, Y" }}</td>
+              <td style="padding:12px 16px;text-align:center;">
+                {% if u.is_active %}<span style="font-size:0.75rem;background:rgba(72,199,142,0.12);color:#48c78e;padding:3px 9px;border-radius:20px;">Active</span>
+                {% else %}<span style="font-size:0.75rem;background:rgba(255,107,107,0.1);color:#ff6b6b;padding:3px 9px;border-radius:20px;">Inactive</span>{% endif %}
+              </td>
+              <td style="padding:12px 16px;text-align:center;">
+                {% if u.is_superuser %}<span style="font-size:0.72rem;background:rgba(245,166,35,0.15);color:var(--saffron);padding:2px 8px;border-radius:10px;">Super</span>
+                {% elif u.is_staff %}<span style="font-size:0.72rem;background:rgba(123,140,222,0.15);color:#7b8cde;padding:2px 8px;border-radius:10px;">Staff</span>
+                {% else %}<span style="font-size:0.72rem;color:var(--muted);">User</span>{% endif %}
+              </td>
+              <td style="padding:12px 16px;text-align:center;">
+                <form method="post" action="{% url 'toggle_user' u.pk %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm" style="font-size:0.75rem;padding:3px 10px;background:{% if u.is_active %}rgba(255,107,107,0.1){% else %}rgba(72,199,142,0.1){% endif %};color:{% if u.is_active %}#ff6b6b{% else %}#48c78e{% endif %};border:1px solid {% if u.is_active %}rgba(255,107,107,0.3){% else %}rgba(72,199,142,0.3){% endif %};border-radius:6px;cursor:pointer;">
+                    {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

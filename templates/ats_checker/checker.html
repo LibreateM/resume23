@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% block title %}ATS Score Checker – ResumeForge{% endblock %}
+{% block nav_tools %}active{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <span class="eyebrow">Instant AI Analysis</span>
+    <h1 class="mt-2">ATS <span style="color:var(--saffron)">Score Checker</span></h1>
+    <p style="color:var(--muted);margin-top:0.8rem;">Find out how well your resume performs in ATS systems. Paste text or upload a PDF.</p>
+  </div>
+</section>
+
+<section style="background:rgba(245,166,35,0.05);border-bottom:1px solid var(--border);padding:1.2rem 0;">
+  <div class="container">
+    <div class="row g-3 text-center">
+      <div class="col-md-4"><div style="color:var(--saffron);font-size:1.1rem;margin-bottom:0.3rem;"><i class="fa-solid fa-paste"></i></div><div style="font-size:0.82rem;font-weight:600;">1. Add Resume</div><div style="color:var(--muted);font-size:0.75rem;">Paste text, upload PDF, or pick saved</div></div>
+      <div class="col-md-4"><div style="color:var(--saffron);font-size:1.1rem;margin-bottom:0.3rem;"><i class="fa-solid fa-robot"></i></div><div style="font-size:0.82rem;font-weight:600;">2. AI Analysis</div><div style="color:var(--muted);font-size:0.75rem;">Gemini AI checks 20+ ATS factors</div></div>
+      <div class="col-md-4"><div style="color:var(--saffron);font-size:1.1rem;margin-bottom:0.3rem;"><i class="fa-solid fa-list-check"></i></div><div style="font-size:0.82rem;font-weight:600;">3. Get Score</div><div style="color:var(--muted);font-size:0.75rem;">Receive detailed feedback & tips</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad">
+  <div class="container">
+    <div class="row gy-5">
+
+      <!-- INPUT SIDE -->
+      <div class="col-lg-6">
+        <div class="rf-card">
+          <h4 style="margin-bottom:1.5rem;"><i class="fa-solid fa-file-lines text-saffron me-2"></i>Your Resume</h4>
+          <form method="post" enctype="multipart/form-data" id="atsForm">
+            {% csrf_token %}
+
+            <!-- Tabs -->
+            <div style="display:flex;gap:8px;margin-bottom:1.2rem;">
+              <button type="button" class="ats-tab active" data-tab="text" onclick="switchTab('text')"><i class="fa-solid fa-paste me-1"></i>Paste Text</button>
+              <button type="button" class="ats-tab" data-tab="pdf" onclick="switchTab('pdf')"><i class="fa-solid fa-file-pdf me-1"></i>Upload PDF</button>
+              {% if user_resumes %}<button type="button" class="ats-tab" data-tab="saved" onclick="switchTab('saved')"><i class="fa-solid fa-bookmark me-1"></i>Saved Resume</button>{% endif %}
+            </div>
+
+            <div id="tab-text">
+              <label class="rf-form-label">Paste Resume Text</label>
+              <textarea class="rf-form-control" name="resume_text" id="atsInput" rows="14" placeholder="Paste your complete resume text here..."></textarea>
+            </div>
+            <div id="tab-pdf" style="display:none;">
+              <label class="rf-form-label">Upload Resume PDF</label>
+              <div style="border:2px dashed rgba(245,166,35,0.3);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;" onclick="document.getElementById('pdfInput').click()">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size:2rem;color:var(--saffron);margin-bottom:8px;display:block;"></i>
+                <div style="font-weight:600;margin-bottom:4px;">Click to upload PDF</div>
+                <div style="color:var(--muted);font-size:0.8rem;">Max 10MB. Text will be extracted automatically.</div>
+                <input type="file" id="pdfInput" name="resume_pdf" accept=".pdf" style="display:none;" onchange="updateFileName(this)"/>
+              </div>
+              <div id="pdfFileName" style="color:var(--saffron);font-size:0.82rem;margin-top:8px;display:none;"></div>
+            </div>
+            {% if user_resumes %}
+            <div id="tab-saved" style="display:none;">
+              <label class="rf-form-label">Select a Saved Resume</label>
+              <select name="resume_id" class="rf-form-control">
+                <option value="">— Choose a resume —</option>
+                {% for r in user_resumes %}
+                <option value="{{ r.pk }}" {% if request.GET.resume == r.pk|stringformat:"s" %}selected{% endif %}>{{ r.title }} ({{ r.created_at|date:"M d, Y" }})</option>
+                {% endfor %}
+              </select>
+            </div>
+            {% endif %}
+
+            <div style="margin-top:1.5rem;">
+              <label class="rf-form-label">Job Description (optional but recommended)</label>
+              <textarea class="rf-form-control" name="job_description" rows="5" placeholder="Paste the job description to get keyword matching analysis..."></textarea>
+              <div style="color:var(--muted);font-size:0.75rem;margin-top:4px;">Adding a JD improves keyword matching accuracy significantly</div>
+            </div>
+            <button type="submit" class="btn btn-rf-primary w-100 mt-4" id="analyzeBtn">
+              <i class="fa-solid fa-magnifying-glass-chart me-2"></i>Analyze with AI
+            </button>
+          </form>
+        </div>
+
+        <!-- History -->
+        {% if history %}
+        <div class="rf-card mt-3">
+          <h5 style="margin-bottom:1rem;"><i class="fa-solid fa-clock-rotate-left text-saffron me-2"></i>Recent Checks</h5>
+          {% for check in history %}
+          <a href="{% url 'ats_detail' check.pk %}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none;">
+            <div>
+              <div style="font-size:0.85rem;color:var(--white);">{{ check.resume.title|default:"Manual Check" }}</div>
+              <div style="font-size:0.75rem;color:var(--muted);">{{ check.created_at|date:"M d, Y H:i" }}</div>
+            </div>
+            <span style="font-size:1rem;font-weight:700;color:{% if check.score >= 80 %}#48c78e{% elif check.score >= 60 %}var(--saffron){% else %}#ff6b6b{% endif %};">{{ check.score }}/100</span>
+          </a>
+          {% endfor %}
+          <a href="{% url 'ats_history' %}" style="font-size:0.8rem;color:var(--saffron);display:block;margin-top:10px;">View full history →</a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- RESULTS SIDE -->
+      <div class="col-lg-6">
+        {% if result %}
+        <div id="atsResult">
+          <!-- Score Circle -->
+          <div class="rf-card text-center mb-3">
+            <div style="width:140px;height:140px;margin:0 auto 1rem;position:relative;">
+              <svg viewBox="0 0 120 120" style="width:140px;height:140px;transform:rotate(-90deg);">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50" fill="none"
+                  stroke="{% if result.score >= 80 %}#48c78e{% elif result.score >= 60 %}#f5a623{% else %}#ff6b6b{% endif %}"
+                  stroke-width="10"
+                  stroke-dasharray="{{ result.score|floatformat:0 }} {{ 100|add:'-'|add:result.score|floatformat:0 }}"
+                  stroke-linecap="round"
+                  style="stroke-dasharray:{{ result.score }}px 314px;stroke-dashoffset:0;"/>
+              </svg>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+                <div style="font-size:2rem;font-weight:800;color:{% if result.score >= 80 %}#48c78e{% elif result.score >= 60 %}#f5a623{% else %}#ff6b6b{% endif %};">{{ result.score }}</div>
+                <div style="font-size:0.7rem;color:var(--muted);">out of 100</div>
+              </div>
+            </div>
+            <h4 style="margin-bottom:6px;">{% if result.score >= 80 %}Excellent!{% elif result.score >= 60 %}Good{% elif result.score >= 40 %}Average{% else %}Needs Work{% endif %}</h4>
+            <p style="color:var(--muted);font-size:0.85rem;max-width:320px;margin:0 auto;">{{ result.feedback }}</p>
+            {% if ats_check %}<a href="{% url 'ats_detail' ats_check.pk %}" class="btn btn-rf-outline btn-sm mt-3"><i class="fa-solid fa-eye me-1"></i>Full Report</a>{% endif %}
+          </div>
+
+          <!-- Section Scores -->
+          {% if result.sections_analysis %}
+          <div class="rf-card mb-3">
+            <h5 style="margin-bottom:1rem;"><i class="fa-solid fa-bars-progress text-saffron me-2"></i>Section Analysis</h5>
+            {% for section, score in result.sections_analysis.items %}
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:4px;">
+                <span style="color:var(--muted);text-transform:capitalize;">{{ section|cut:"_" }}</span>
+                <span style="font-weight:600;color:{% if score >= 80 %}#48c78e{% elif score >= 60 %}var(--saffron){% else %}#ff6b6b{% endif %};">{{ score }}/100</span>
+              </div>
+              <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
+                <div style="height:100%;width:{{ score }}%;background:{% if score >= 80 %}#48c78e{% elif score >= 60 %}#f5a623{% else %}#ff6b6b{% endif %};border-radius:3px;transition:width 1s ease;"></div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <!-- Keywords -->
+          <div class="rf-card mb-3">
+            <h5 style="margin-bottom:1rem;"><i class="fa-solid fa-tags text-saffron me-2"></i>Keywords</h5>
+            {% if result.keywords_found %}
+            <div style="margin-bottom:0.8rem;">
+              <div style="font-size:0.78rem;color:#48c78e;font-weight:600;margin-bottom:6px;"><i class="fa-solid fa-check me-1"></i>Found ({{ result.keywords_found|length }})</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                {% for kw in result.keywords_found %}
+                <span style="background:rgba(72,199,142,0.12);color:#48c78e;padding:3px 10px;border-radius:20px;font-size:0.75rem;border:1px solid rgba(72,199,142,0.25);">{{ kw }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+            {% if result.keywords_missing %}
+            <div>
+              <div style="font-size:0.78rem;color:#ff6b6b;font-weight:600;margin-bottom:6px;"><i class="fa-solid fa-xmark me-1"></i>Missing ({{ result.keywords_missing|length }})</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                {% for kw in result.keywords_missing %}
+                <span style="background:rgba(255,107,107,0.1);color:#ff6b6b;padding:3px 10px;border-radius:20px;font-size:0.75rem;border:1px solid rgba(255,107,107,0.25);">{{ kw }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Suggestions -->
+          {% if result.suggestions %}
+          <div class="rf-card">
+            <h5 style="margin-bottom:1rem;"><i class="fa-solid fa-lightbulb text-saffron me-2"></i>Improvement Tips</h5>
+            {% for tip in result.suggestions %}
+            <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+              <span style="color:var(--saffron);font-size:0.8rem;margin-top:2px;flex-shrink:0;">{{ forloop.counter }}.</span>
+              <span style="color:var(--muted);font-size:0.85rem;">{{ tip }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="rf-card text-center" style="padding:60px 2rem;">
+          <i class="fa-solid fa-chart-bar" style="font-size:4rem;color:rgba(245,166,35,0.2);margin-bottom:1.5rem;display:block;"></i>
+          <h4 style="color:var(--muted);">Your ATS Score Will Appear Here</h4>
+          <p style="color:var(--muted);font-size:0.85rem;margin:0;">Add your resume on the left and click "Analyze with AI" to get your detailed ATS report powered by Google Gemini.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+function switchTab(tab) {
+  ['text','pdf','saved'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('.ats-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+}
+
+function updateFileName(input) {
+  const div = document.getElementById('pdfFileName');
+  if (input.files.length) {
+    div.textContent = '✓ ' + input.files[0].name;
+    div.style.display = 'block';
+  }
+}
+
+document.getElementById('atsForm').addEventListener('submit', function() {
+  const btn = document.getElementById('analyzeBtn');
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Analyzing with Gemini AI...';
+  btn.disabled = true;
+});
+</script>
+<style>
+.ats-tab { background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--muted); padding:6px 14px; border-radius:8px; font-size:0.8rem; cursor:pointer; transition:all 0.2s; }
+.ats-tab.active, .ats-tab:hover { background:rgba(245,166,35,0.12); border-color:var(--saffron); color:var(--saffron); }
+</style>
+{% endblock %}

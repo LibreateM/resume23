@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Sign In – ResumeForge{% endblock %}
+{% block content %}
+<section style="min-height:80vh;display:flex;align-items:center;padding:60px 0;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5 col-lg-4">
+        <div class="rf-card">
+          <div class="text-center mb-4">
+            <i class="fa-solid fa-right-to-bracket" style="font-size:2rem;color:var(--saffron);margin-bottom:12px;display:block;"></i>
+            <h3>Welcome Back</h3>
+            <p style="color:var(--muted);font-size:0.88rem;">Sign in to your ResumeForge account</p>
+          </div>
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="rf-form-label">Username or Email</label>
+              <input type="text" name="username" class="rf-form-control" placeholder="username or email" required autofocus/>
+            </div>
+            <div class="mb-4">
+              <label class="rf-form-label">Password</label>
+              <input type="password" name="password" class="rf-form-control" placeholder="Your password" required/>
+            </div>
+            <button type="submit" class="btn btn-rf-primary w-100">
+              <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In
+            </button>
+          </form>
+          <div class="text-center mt-3" style="color:var(--muted);font-size:0.85rem;">
+            Don't have an account? <a href="{% url 'signup' %}">Sign Up Free</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

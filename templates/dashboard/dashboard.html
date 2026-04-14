@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard – ResumeForge{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <span class="eyebrow">Welcome back</span>
+        <h1 class="mt-1">{{ user.first_name|default:user.username }}'s <span style="color:var(--saffron)">Dashboard</span></h1>
+      </div>
+      <a href="{% url 'builder' %}" class="btn btn-rf-primary"><i class="fa-solid fa-plus me-2"></i>New Resume</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad-sm">
+  <div class="container">
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-4">
+        <div class="rf-card text-center">
+          <div style="font-size:2.5rem;font-weight:700;color:var(--saffron);">{{ total_resumes }}</div>
+          <div style="color:var(--muted);font-size:0.85rem;margin-top:4px;">Total Resumes</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="rf-card text-center">
+          <div style="font-size:2.5rem;font-weight:700;color:{% if avg_ats_score >= 80 %}#48c78e{% elif avg_ats_score >= 60 %}var(--saffron){% else %}#ff6b6b{% endif %};">{{ avg_ats_score }}</div>
+          <div style="color:var(--muted);font-size:0.85rem;margin-top:4px;">Avg ATS Score</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="rf-card text-center">
+          <div style="font-size:2.5rem;font-weight:700;color:var(--saffron);">{{ total_ats_checks }}</div>
+          <div style="color:var(--muted);font-size:0.85rem;margin-top:4px;">ATS Checks Done</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Resumes -->
+    <div class="mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 style="margin:0;"><i class="fa-solid fa-file-lines me-2 text-saffron"></i>My Resumes</h4>
+        <a href="{% url 'builder' %}" class="btn btn-rf-outline btn-sm"><i class="fa-solid fa-plus me-1"></i>New</a>
+      </div>
+      {% if resume_with_scores %}
+      <div class="row g-4">
+        {% for item in resume_with_scores %}
+        <div class="col-md-6 col-lg-4">
+          <div class="rf-card h-100" style="position:relative;">
+            {% if item.resume.is_ai_generated %}
+            <span style="position:absolute;top:14px;right:14px;background:rgba(245,166,35,0.15);color:var(--saffron);font-size:0.7rem;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,166,35,0.3);">
+              <i class="fa-solid fa-wand-magic-sparkles me-1"></i>AI
+            </span>
+            {% endif %}
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">{{ item.resume.get_template_display }}</div>
+            <h5 style="margin-bottom:4px;padding-right:50px;">{{ item.resume.title }}</h5>
+            <div style="color:var(--muted);font-size:0.82rem;margin-bottom:12px;">{{ item.resume.job_title|default:"No title set" }}</div>
+            {% if item.ats %}
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--border);">
+              <div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;background:{% if item.ats.score >= 80 %}rgba(72,199,142,0.15){% elif item.ats.score >= 60 %}rgba(245,166,35,0.15){% else %}rgba(255,107,107,0.15){% endif %};color:{% if item.ats.score >= 80 %}#48c78e{% elif item.ats.score >= 60 %}var(--saffron){% else %}#ff6b6b{% endif %};">{{ item.ats.score }}</div>
+              <div><div style="font-size:0.75rem;color:var(--muted);">ATS Score</div><div style="font-size:0.8rem;font-weight:600;color:{% if item.ats.score >= 80 %}#48c78e{% elif item.ats.score >= 60 %}var(--saffron){% else %}#ff6b6b{% endif %};">{{ item.ats.score_label }}</div></div>
+            </div>
+            {% else %}
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:6px;border:1px solid var(--border);">
+              <i class="fa-solid fa-circle-info me-1"></i>No ATS check yet
+            </div>
+            {% endif %}
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;">{{ item.resume.created_at|date:"M d, Y" }}</div>
+            <div class="d-flex gap-2 flex-wrap">
+              <a href="{% url 'resume_detail' item.resume.pk %}" class="btn btn-rf-outline btn-sm"><i class="fa-solid fa-eye me-1"></i>View</a>
+              <a href="{% url 'resume_edit' item.resume.pk %}" class="btn btn-rf-outline btn-sm"><i class="fa-solid fa-pen me-1"></i>Edit</a>
+              <a href="{% url 'download_pdf' item.resume.pk %}" class="btn btn-rf-primary btn-sm"><i class="fa-solid fa-file-pdf me-1"></i>PDF</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if resumes.count > 6 %}
+      <div class="text-center mt-4">
+        <a href="#" style="color:var(--saffron);font-size:0.85rem;">View all {{ resumes.count }} resumes →</a>
+      </div>
+      {% endif %}
+      {% else %}
+      <div class="rf-card text-center" style="padding:48px;">
+        <i class="fa-solid fa-file-circle-plus" style="font-size:3rem;color:var(--muted);margin-bottom:16px;display:block;"></i>
+        <h5 style="color:var(--muted);">No resumes yet</h5>
+        <p style="color:var(--muted);font-size:0.85rem;">Create your first resume to get started</p>
+        <div class="d-flex gap-3 justify-content-center mt-3">
+          <a href="{% url 'builder' %}" class="btn btn-rf-primary"><i class="fa-solid fa-pen-to-square me-2"></i>Build Manually</a>
+          <a href="{% url 'ai_builder' %}" class="btn btn-rf-outline"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Use AI Builder</a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Recent ATS Checks -->
+    <div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 style="margin:0;"><i class="fa-solid fa-chart-bar me-2 text-saffron"></i>Recent ATS Checks</h4>
+        <a href="{% url 'ats_checker' %}" class="btn btn-rf-outline btn-sm"><i class="fa-solid fa-plus me-1"></i>New Check</a>
+      </div>
+      {% if ats_checks %}
+      <div class="rf-card" style="padding:0;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);">
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Resume</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Score</th>
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Status</th>
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Date</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for check in ats_checks %}
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+              <td style="padding:12px 16px;font-size:0.85rem;color:var(--white);">{{ check.resume.title|default:"Manual Check" }}</td>
+              <td style="padding:12px 16px;text-align:center;">
+                <span style="font-size:1rem;font-weight:700;color:{% if check.score >= 80 %}#48c78e{% elif check.score >= 60 %}var(--saffron){% else %}#ff6b6b{% endif %};">{{ check.score }}<span style="font-size:0.7rem;color:var(--muted);">/100</span></span>
+              </td>
+              <td style="padding:12px 16px;">
+                <span style="font-size:0.75rem;padding:3px 10px;border-radius:20px;font-weight:600;background:{% if check.score >= 80 %}rgba(72,199,142,0.12){% elif check.score >= 60 %}rgba(245,166,35,0.12){% else %}rgba(255,107,107,0.12){% endif %};color:{% if check.score >= 80 %}#48c78e{% elif check.score >= 60 %}var(--saffron){% else %}#ff6b6b{% endif %};">{{ check.score_label }}</span>
+              </td>
+              <td style="padding:12px 16px;font-size:0.82rem;color:var(--muted);">{{ check.created_at|date:"M d, Y" }}</td>
+              <td style="padding:12px 16px;text-align:center;">
+                <a href="{% url 'ats_detail' check.pk %}" class="btn btn-rf-outline btn-sm" style="padding:4px 12px;font-size:0.75rem;">View</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center mt-3">
+        <a href="{% url 'ats_history' %}" style="color:var(--saffron);font-size:0.85rem;">View all ATS history →</a>
+      </div>
+      {% else %}
+      <div class="rf-card text-center" style="padding:36px;">
+        <i class="fa-solid fa-chart-bar" style="font-size:2.5rem;color:var(--muted);margin-bottom:12px;display:block;"></i>
+        <p style="color:var(--muted);margin:0;">No ATS checks yet. <a href="{% url 'ats_checker' %}">Check your resume score now →</a></p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

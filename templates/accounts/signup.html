@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up – ResumeForge{% endblock %}
+{% block content %}
+<section style="min-height:80vh;display:flex;align-items:center;padding:60px 0;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="rf-card">
+          <div class="text-center mb-4">
+            <i class="fa-solid fa-user-plus" style="font-size:2rem;color:var(--saffron);margin-bottom:12px;display:block;"></i>
+            <h3>Create Your Account</h3>
+            <p style="color:var(--muted);font-size:0.88rem;">Start building career-winning resumes today</p>
+          </div>
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="rf-form-label">First Name</label>
+                <input type="text" name="first_name" class="rf-form-control" placeholder="John" value="{{ form.first_name.value|default:'' }}" required/>
+              </div>
+              <div class="col-md-6">
+                <label class="rf-form-label">Last Name</label>
+                <input type="text" name="last_name" class="rf-form-control" placeholder="Doe" value="{{ form.last_name.value|default:'' }}"/>
+              </div>
+              <div class="col-12">
+                <label class="rf-form-label">Username</label>
+                <input type="text" name="username" class="rf-form-control" placeholder="johndoe" value="{{ form.username.value|default:'' }}" required/>
+              </div>
+              <div class="col-12">
+                <label class="rf-form-label">Email Address</label>
+                <input type="email" name="email" class="rf-form-control" placeholder="john@example.com" value="{{ form.email.value|default:'' }}" required/>
+              </div>
+              <div class="col-12">
+                <label class="rf-form-label">Password</label>
+                <input type="password" name="password1" class="rf-form-control" placeholder="Min 8 characters" required/>
+              </div>
+              <div class="col-12">
+                <label class="rf-form-label">Confirm Password</label>
+                <input type="password" name="password2" class="rf-form-control" placeholder="Repeat password" required/>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-rf-primary w-100">
+                  <i class="fa-solid fa-user-plus me-2"></i>Create Account
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="text-center mt-3" style="color:var(--muted);font-size:0.85rem;">
+            Already have an account? <a href="{% url 'signin' %}">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

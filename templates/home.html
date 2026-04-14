@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}ResumeForge – Build Your Career Story{% endblock %}
+{% block nav_home %}active{% endblock %}
+{% load static %}
+{% block content %}
+
+<section class="rf-hero">
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6">
+        <div class="hero-badge"><i class="fa-solid fa-sparkles me-1"></i> AI-Powered Resume Builder</div>
+        <h1>Craft Resumes That<br><em style="color:var(--saffron);font-style:italic;">Open Doors</em></h1>
+        <p class="lead">Build stunning, ATS-optimized resumes in minutes. Stand out from the crowd with professionally designed templates and AI assistance.</p>
+        <div class="hero-btns">
+          <a href="{% url 'builder' %}" class="btn btn-rf-primary btn-lg"><i class="fa-solid fa-pen-to-square me-2"></i>Start Building Free</a>
+          <a href="{% url 'templates_page' %}" class="btn btn-rf-outline btn-lg"><i class="fa-solid fa-eye me-2"></i>View Templates</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-label">Resumes Created</div></div>
+          <div class="stat-item"><div class="stat-num">94%</div><div class="stat-label">Success Rate</div></div>
+          <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">User Rating</div></div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-img-wrap">
+          <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&auto=format&fit=crop&q=80" alt="Professional Resume"/>
+          <div style="position:absolute;bottom:24px;left:-24px;background:var(--navy-mid);border:1px solid var(--border);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);">
+            <div style="width:40px;height:40px;background:rgba(72,199,142,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#48c78e;font-size:1.1rem;"><i class="fa-solid fa-check-double"></i></div>
+            <div><div style="font-size:0.75rem;color:var(--muted);">ATS Score</div><div style="font-weight:700;color:var(--white);">92 / 100</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad">
+  <div class="container">
+    <div class="section-header text-center fade-up">
+      <span class="eyebrow">Everything You Need</span>
+      <h2>Powerful Tools for<br>Every Job Seeker</h2>
+      <p>From first-time applicants to seasoned professionals — our platform has you covered.</p>
+    </div>
+    <div class="row g-4 mt-2">
+      <div class="col-md-6 col-lg-3 fade-up">
+        <div class="rf-card h-100 text-center">
+          <div class="feature-icon mx-auto"><i class="fa-solid fa-pen-to-square"></i></div>
+          <h5>Resume Builder</h5>
+          <p style="color:var(--muted);font-size:0.88rem;">Step-by-step builder with live preview. Add sections, customize content, and export professionally.</p>
+          <a href="{% url 'builder' %}" class="btn btn-rf-outline btn-sm mt-2">Start Building</a>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up">
+        <div class="rf-card h-100 text-center">
+          <div class="feature-icon mx-auto"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h5>AI Resume Builder</h5>
+          <p style="color:var(--muted);font-size:0.88rem;">Let Google Gemini AI generate a complete, tailored resume in seconds based on your role and skills.</p>
+          <a href="{% url 'ai_builder' %}" class="btn btn-rf-outline btn-sm mt-2">Try AI Builder</a>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up">
+        <div class="rf-card h-100 text-center">
+          <div class="feature-icon mx-auto"><i class="fa-solid fa-chart-bar"></i></div>
+          <h5>ATS Score Checker</h5>
+          <p style="color:var(--muted);font-size:0.88rem;">Check your ATS score instantly. Paste text or upload a PDF. Get actionable improvement tips.</p>
+          <a href="{% url 'ats_checker' %}" class="btn btn-rf-outline btn-sm mt-2">Check Score</a>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up">
+        <div class="rf-card h-100 text-center">
+          <div class="feature-icon mx-auto"><i class="fa-solid fa-file-pdf"></i></div>
+          <h5>PDF Download</h5>
+          <p style="color:var(--muted);font-size:0.88rem;">Download your resume as a professional PDF in 4 beautiful templates — Classic, Modern, Minimal, Executive.</p>
+          {% if user.is_authenticated %}<a href="{% url 'dashboard' %}" class="btn btn-rf-outline btn-sm mt-2">My Resumes</a>
+          {% else %}<a href="{% url 'signup' %}" class="btn btn-rf-outline btn-sm mt-2">Get Started</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" style="background:rgba(245,166,35,0.03);border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6 fade-up">
+        <span class="eyebrow">AI-Powered</span>
+        <h2>Generate in <em style="color:var(--saffron);">30 Seconds</em></h2>
+        <p style="color:var(--muted);">Tell our AI your job role and skills. Gemini AI crafts a complete, ATS-optimized resume tailored specifically for you.</p>
+        <ul style="list-style:none;padding:0;margin:1.5rem 0;">
+          <li style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="color:#48c78e;font-size:1.1rem;"><i class="fa-solid fa-circle-check"></i></span><span style="color:var(--muted);">Professional summary auto-generated</span></li>
+          <li style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="color:#48c78e;font-size:1.1rem;"><i class="fa-solid fa-circle-check"></i></span><span style="color:var(--muted);">Role-specific experience & achievements</span></li>
+          <li style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="color:#48c78e;font-size:1.1rem;"><i class="fa-solid fa-circle-check"></i></span><span style="color:var(--muted);">ATS-optimized keywords included</span></li>
+          <li style="display:flex;align-items:center;gap:12px;"><span style="color:#48c78e;font-size:1.1rem;"><i class="fa-solid fa-circle-check"></i></span><span style="color:var(--muted);">Editable and downloadable as PDF</span></li>
+        </ul>
+        <a href="{% url 'ai_builder' %}" class="btn btn-rf-primary"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Try AI Builder Free</a>
+      </div>
+      <div class="col-lg-5 offset-lg-1 fade-up">
+        <div class="rf-card" style="background:var(--navy-mid);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;">
+            <div style="width:36px;height:36px;background:rgba(245,166,35,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--saffron);"><i class="fa-solid fa-robot"></i></div>
+            <span style="font-weight:600;">Gemini AI is generating your resume…</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:1rem;border:1px solid var(--border);">
+            <div style="color:var(--muted);font-size:0.8rem;margin-bottom:6px;">Target Role</div>
+            <div style="color:var(--white);font-weight:600;margin-bottom:1rem;">Senior Software Engineer</div>
+            <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-bottom:6px;"><div style="height:100%;width:90%;background:linear-gradient(90deg,var(--saffron),#fbbf5c);border-radius:3px;"></div></div>
+            <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-bottom:6px;"><div style="height:100%;width:75%;background:linear-gradient(90deg,var(--saffron),#fbbf5c);border-radius:3px;"></div></div>
+            <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;"><div style="height:100%;width:60%;background:linear-gradient(90deg,var(--saffron),#fbbf5c);border-radius:3px;"></div></div>
+          </div>
+          <div style="margin-top:1rem;padding:0.8rem;background:rgba(72,199,142,0.08);border-radius:8px;border:1px solid rgba(72,199,142,0.2);display:flex;align-items:center;gap:8px;">
+            <i class="fa-solid fa-check-circle" style="color:#48c78e;"></i>
+            <span style="color:#48c78e;font-size:0.85rem;font-weight:600;">Resume generated! ATS Score: 88/100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad">
+  <div class="container text-center fade-up">
+    <span class="eyebrow">Get Started Today</span>
+    <h2>Ready to Land Your<br><em style="color:var(--saffron);">Dream Job?</em></h2>
+    <p style="color:var(--muted);max-width:500px;margin:0 auto 2rem;">Join thousands of professionals who've built career-winning resumes with ResumeForge.</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'builder' %}" class="btn btn-rf-primary btn-lg me-3"><i class="fa-solid fa-pen-to-square me-2"></i>Build a Resume</a>
+    <a href="{% url 'dashboard' %}" class="btn btn-rf-outline btn-lg"><i class="fa-solid fa-gauge me-2"></i>My Dashboard</a>
+    {% else %}
+    <a href="{% url 'signup' %}" class="btn btn-rf-primary btn-lg me-3"><i class="fa-solid fa-rocket me-2"></i>Create Free Account</a>
+    <a href="{% url 'signin' %}" class="btn btn-rf-outline btn-lg">Sign In</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}All Resumes – Admin{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div><span class="eyebrow">Admin Panel</span><h1 class="mt-1">All <span style="color:var(--saffron)">Resumes</span></h1></div>
+      <a href="{% url 'admin_dashboard' %}" class="btn btn-rf-outline btn-sm"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
+    </div>
+  </div>
+</section>
+<section class="section-pad-sm">
+  <div class="container">
+    <div class="rf-card" style="padding:0;overflow:hidden;">
+      <div style="padding:1rem 1.5rem;border-bottom:1px solid var(--border);">
+        <span style="font-weight:600;">{{ resumes.count }} Resumes Total</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);">
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Title</th>
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">User</th>
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Template</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">AI</th>
+              <th style="padding:12px 16px;text-align:left;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Created</th>
+              <th style="padding:12px 16px;text-align:center;font-size:0.78rem;color:var(--muted);text-transform:uppercase;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in resumes %}
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+              <td style="padding:12px 16px;">
+                <div style="font-size:0.88rem;color:var(--white);font-weight:500;">{{ r.title }}</div>
+                <div style="font-size:0.75rem;color:var(--muted);">{{ r.job_title|default:"—" }}</div>
+              </td>
+              <td style="padding:12px 16px;font-size:0.85rem;color:var(--muted);">{{ r.user.username }}</td>
+              <td style="padding:12px 16px;font-size:0.82rem;color:var(--muted);">{{ r.get_template_display }}</td>
+              <td style="padding:12px 16px;text-align:center;">{% if r.is_ai_generated %}<span style="color:var(--saffron);font-size:0.75rem;"><i class="fa-solid fa-wand-magic-sparkles"></i></span>{% else %}—{% endif %}</td>
+              <td style="padding:12px 16px;font-size:0.82rem;color:var(--muted);">{{ r.created_at|date:"M d, Y" }}</td>
+              <td style="padding:12px 16px;text-align:center;">
+                <a href="{% url 'resume_detail' r.pk %}" class="btn btn-rf-outline btn-sm" style="font-size:0.75rem;padding:3px 10px;margin-right:4px;">View</a>
+                <form method="post" action="{% url 'delete_resume_admin' r.pk %}" style="display:inline;" onsubmit="return confirm('Delete this resume?')">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm" style="font-size:0.75rem;padding:3px 10px;background:rgba(255,107,107,0.1);color:#ff6b6b;border:1px solid rgba(255,107,107,0.3);border-radius:6px;">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

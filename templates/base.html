@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}ResumeForge{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg rf-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <i class="fa-solid fa-file-lines" style="color:var(--saffron)"></i>
+      Resume<span>Forge</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item"><a class="nav-link {% block nav_home %}{% endblock %}" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% block nav_tools %}{% endblock %}" href="#" data-bs-toggle="dropdown">Tools</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'builder' %}"><i class="fa-solid fa-pen-to-square me-2 text-saffron"></i>Resume Builder</a></li>
+            <li><a class="dropdown-item" href="{% url 'templates_page' %}"><i class="fa-solid fa-table-columns me-2 text-saffron"></i>Templates</a></li>
+            <li><a class="dropdown-item" href="{% url 'ats_checker' %}"><i class="fa-solid fa-chart-bar me-2 text-saffron"></i>ATS Checker</a></li>
+            <li><a class="dropdown-item" href="{% url 'ai_builder' %}"><i class="fa-solid fa-wand-magic-sparkles me-2 text-saffron"></i>AI Builder</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link {% block nav_about %}{% endblock %}" href="{% url 'about' %}">About</a></li>
+        <li class="nav-item"><a class="nav-link {% block nav_contact %}{% endblock %}" href="{% url 'contact' %}">Contact</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="fa-solid fa-circle-user me-1" style="color:var(--saffron)"></i>{{ user.first_name|default:user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+              <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user me-2"></i>Profile</a></li>
+              {% if user.is_staff %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-shield me-2 text-saffron"></i>Admin Panel</a></li>
+              {% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'signin' %}">Sign In</a></li>
+          <li class="nav-item"><a class="nav-link btn-nav-cta" href="{% url 'signup' %}">Get Started</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="container mt-3">
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" role="alert">
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<!-- FOOTER -->
+<footer style="background:var(--navy-mid);border-top:1px solid var(--border);padding:40px 0;margin-top:80px;">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--white);margin-bottom:8px;">
+          <i class="fa-solid fa-file-lines me-2" style="color:var(--saffron)"></i>ResumeForge
+        </div>
+        <p style="color:var(--muted);font-size:0.85rem;">Build stunning, ATS-optimized resumes with AI assistance.</p>
+      </div>
+      <div class="col-md-2">
+        <div style="font-weight:600;color:var(--white);margin-bottom:12px;font-size:0.85rem;">Tools</div>
+        <ul style="list-style:none;padding:0;margin:0;">
+          <li><a href="{% url 'builder' %}" style="color:var(--muted);font-size:0.82rem;display:block;margin-bottom:6px;">Builder</a></li>
+          <li><a href="{% url 'ats_checker' %}" style="color:var(--muted);font-size:0.82rem;display:block;margin-bottom:6px;">ATS Checker</a></li>
+          <li><a href="{% url 'ai_builder' %}" style="color:var(--muted);font-size:0.82rem;display:block;margin-bottom:6px;">AI Builder</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2">
+        <div style="font-weight:600;color:var(--white);margin-bottom:12px;font-size:0.85rem;">Company</div>
+        <ul style="list-style:none;padding:0;margin:0;">
+          <li><a href="{% url 'about' %}" style="color:var(--muted);font-size:0.82rem;display:block;margin-bottom:6px;">About</a></li>
+          <li><a href="{% url 'contact' %}" style="color:var(--muted);font-size:0.82rem;display:block;margin-bottom:6px;">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <p style="color:var(--muted);font-size:0.82rem;">&copy; 2024 ResumeForge. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/script.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

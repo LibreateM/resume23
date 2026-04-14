@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Contact – ResumeForge{% endblock %}
+{% block nav_contact %}active{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <span class="eyebrow">Get In Touch</span>
+    <h1 class="mt-2">Contact <span style="color:var(--saffron)">Us</span></h1>
+    <p style="color:var(--muted);margin-top:0.8rem;">Have questions or feedback? We'd love to hear from you.</p>
+  </div>
+</section>
+<section class="section-pad">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="rf-card">
+          <h4 style="margin-bottom:1.5rem;"><i class="fa-solid fa-envelope text-saffron me-2"></i>Send a Message</h4>
+          <form method="post">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="rf-form-label">Name</label>
+                <input type="text" name="name" class="rf-form-control" placeholder="John Doe" required/>
+              </div>
+              <div class="col-md-6">
+                <label class="rf-form-label">Email</label>
+                <input type="email" name="email" class="rf-form-control" placeholder="john@example.com" required/>
+              </div>
+              <div class="col-12">
+                <label class="rf-form-label">Subject</label>
+                <input type="text" name="subject" class="rf-form-control" placeholder="How can we help?"/>
+              </div>
+              <div class="col-12">
+                <label class="rf-form-label">Message</label>
+                <textarea name="message" class="rf-form-control" rows="5" placeholder="Your message..." required></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-rf-primary w-100"><i class="fa-solid fa-paper-plane me-2"></i>Send Message</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

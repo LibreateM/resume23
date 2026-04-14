@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% block title %}{% if editing %}Edit Resume{% else %}Resume Builder{% endif %} – ResumeForge{% endblock %}
+{% block nav_tools %}active{% endblock %}
+{% load static %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <span class="eyebrow">Step-by-Step Builder</span>
+    <h1 class="mt-2">{% if editing %}Edit Your <span style="color:var(--saffron)">Resume</span>{% else %}Build Your <span style="color:var(--saffron)">Perfect Resume</span>{% endif %}</h1>
+  </div>
+</section>
+
+<div style="background:var(--navy-mid);border-bottom:1px solid var(--border);padding:1.2rem 0;position:sticky;top:68px;z-index:100;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span style="font-size:0.82rem;color:var(--muted);" id="progressLabel">Step 1 of 5</span>
+      <div class="d-flex gap-3">
+        <button id="btnPrev" class="btn btn-rf-outline btn-sm" disabled><i class="fa-solid fa-chevron-left me-1"></i>Back</button>
+        <button id="btnNext" class="btn btn-rf-primary btn-sm">Next<i class="fa-solid fa-chevron-right ms-1"></i></button>
+        <button id="btnSubmit" class="btn btn-rf-primary btn-sm" style="display:none;"><i class="fa-solid fa-floppy-disk me-2"></i>{% if editing %}Update{% else %}Save{% endif %} Resume</button>
+      </div>
+    </div>
+    <div class="rf-progress"><div class="rf-progress-bar" id="builderProgress" style="width:20%;"></div></div>
+  </div>
+</div>
+
+<section style="padding:48px 0 80px;">
+  <div class="container">
+    <form method="post" id="resumeBuilderForm" action="{% if editing %}{% url 'resume_edit' resume.pk %}{% else %}{% url 'builder' %}{% endif %}">
+      {% csrf_token %}
+
+      <!-- Step 1: Personal Info -->
+      <div id="step-1" class="builder-step">
+        <div class="builder-section">
+          <h4><i class="fa-solid fa-user"></i> Personal Information</h4>
+          <div class="row g-3">
+            <div class="col-md-6"><label class="rf-form-label">Resume Title</label><input type="text" name="resume_title" class="rf-form-control" placeholder="e.g. Software Engineer Resume" value="{{ resume.title|default:'' }}"/></div>
+            <div class="col-md-6"><label class="rf-form-label">Template</label>
+              <select name="template" class="rf-form-control">
+                <option value="classic" {% if resume.template == 'classic' %}selected{% endif %}>Classic</option>
+                <option value="modern" {% if resume.template == 'modern' %}selected{% endif %}>Modern</option>
+                <option value="minimal" {% if resume.template == 'minimal' %}selected{% endif %}>Minimal</option>
+                <option value="executive" {% if resume.template == 'executive' %}selected{% endif %}>Executive</option>
+              </select>
+            </div>
+            <div class="col-md-6"><label class="rf-form-label">Full Name *</label><input type="text" name="full_name" class="rf-form-control" placeholder="Jane Smith" value="{{ resume.full_name|default:'' }}" required/></div>
+            <div class="col-md-6"><label class="rf-form-label">Job Title</label><input type="text" name="job_title" class="rf-form-control" placeholder="Software Engineer" value="{{ resume.job_title|default:'' }}"/></div>
+            <div class="col-md-6"><label class="rf-form-label">Email</label><input type="email" name="email" class="rf-form-control" placeholder="jane@example.com" value="{{ resume.email|default:user.email }}"/></div>
+            <div class="col-md-6"><label class="rf-form-label">Phone</label><input type="text" name="phone" class="rf-form-control" placeholder="+91 9876543210" value="{{ resume.phone|default:'' }}"/></div>
+            <div class="col-md-6"><label class="rf-form-label">Location</label><input type="text" name="location" class="rf-form-control" placeholder="New Delhi, India" value="{{ resume.location|default:'' }}"/></div>
+            <div class="col-md-6"><label class="rf-form-label">LinkedIn URL</label><input type="text" name="linkedin" class="rf-form-control" placeholder="linkedin.com/in/janesmith" value="{{ resume.linkedin|default:'' }}"/></div>
+            <div class="col-md-6"><label class="rf-form-label">Website/Portfolio</label><input type="text" name="website" class="rf-form-control" placeholder="github.com/janesmith" value="{{ resume.website|default:'' }}"/></div>
+            <div class="col-12"><label class="rf-form-label">Professional Summary</label><textarea name="summary" class="rf-form-control" rows="4" placeholder="A brief overview of your professional background...">{{ resume.summary|default:'' }}</textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Education -->
+      <div id="step-2" class="builder-step" style="display:none;">
+        <div class="builder-section">
+          <h4><i class="fa-solid fa-graduation-cap"></i> Education</h4>
+          <div id="eduList">
+            {% if editing and resume.get_education %}
+              {% for edu in resume.get_education %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-6"><label class="rf-form-label">School/University</label><input type="text" name="edu_school[]" class="rf-form-control" value="{{ edu.school }}"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">Degree</label><input type="text" name="edu_degree[]" class="rf-form-control" value="{{ edu.degree }}"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">Year</label><input type="text" name="edu_year[]" class="rf-form-control" value="{{ edu.year }}"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">GPA</label><input type="text" name="edu_gpa[]" class="rf-form-control" value="{{ edu.gpa }}"/></div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-6"><label class="rf-form-label">School/University</label><input type="text" name="edu_school[]" class="rf-form-control" placeholder="MIT"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">Degree</label><input type="text" name="edu_degree[]" class="rf-form-control" placeholder="B.Sc. Computer Science"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">Year</label><input type="text" name="edu_year[]" class="rf-form-control" placeholder="2020 – 2024"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">GPA (optional)</label><input type="text" name="edu_gpa[]" class="rf-form-control" placeholder="3.8 / 4.0"/></div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <button type="button" id="addEdu" class="btn-add-entry"><i class="fa-solid fa-plus me-2"></i>Add Another Education</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Experience -->
+      <div id="step-3" class="builder-step" style="display:none;">
+        <div class="builder-section">
+          <h4><i class="fa-solid fa-briefcase"></i> Work Experience</h4>
+          <div id="expList">
+            {% if editing and resume.get_experience %}
+              {% for exp in resume.get_experience %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-6"><label class="rf-form-label">Company</label><input type="text" name="exp_company[]" class="rf-form-control" value="{{ exp.company }}"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">Role/Title</label><input type="text" name="exp_role[]" class="rf-form-control" value="{{ exp.role }}"/></div>
+                  <div class="col-md-12"><label class="rf-form-label">Dates</label><input type="text" name="exp_dates[]" class="rf-form-control" value="{{ exp.dates }}"/></div>
+                  <div class="col-12"><label class="rf-form-label">Description</label><textarea name="exp_desc[]" class="rf-form-control" rows="4">{{ exp.description }}</textarea></div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-6"><label class="rf-form-label">Company</label><input type="text" name="exp_company[]" class="rf-form-control" placeholder="Google"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">Role/Title</label><input type="text" name="exp_role[]" class="rf-form-control" placeholder="Software Engineer"/></div>
+                  <div class="col-md-12"><label class="rf-form-label">Dates</label><input type="text" name="exp_dates[]" class="rf-form-control" placeholder="Jan 2022 – Present"/></div>
+                  <div class="col-12"><label class="rf-form-label">Description (one achievement per line)</label><textarea name="exp_desc[]" class="rf-form-control" rows="4" placeholder="• Led development of microservices serving 500K users&#10;• Improved performance by 40%"></textarea></div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <button type="button" id="addExp" class="btn-add-entry"><i class="fa-solid fa-plus me-2"></i>Add Another Experience</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Skills & Projects -->
+      <div id="step-4" class="builder-step" style="display:none;">
+        <div class="builder-section">
+          <h4><i class="fa-solid fa-code"></i> Skills</h4>
+          <div class="mb-4">
+            <label class="rf-form-label">Skills (comma separated)</label>
+            <textarea name="skills" class="rf-form-control" rows="3" placeholder="Python, Django, React, PostgreSQL, Docker, AWS">{% if editing %}{{ resume.get_skills|join:', ' }}{% endif %}</textarea>
+          </div>
+          <h4><i class="fa-solid fa-diagram-project"></i> Projects</h4>
+          <div id="projList">
+            {% if editing and resume.get_projects %}
+              {% for p in resume.get_projects %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-6"><label class="rf-form-label">Project Name</label><input type="text" name="proj_name[]" class="rf-form-control" value="{{ p.name }}"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">URL (optional)</label><input type="text" name="proj_url[]" class="rf-form-control" value="{{ p.url }}"/></div>
+                  <div class="col-12"><label class="rf-form-label">Description</label><textarea name="proj_desc[]" class="rf-form-control" rows="2">{{ p.description }}</textarea></div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-6"><label class="rf-form-label">Project Name</label><input type="text" name="proj_name[]" class="rf-form-control" placeholder="E-commerce App"/></div>
+                  <div class="col-md-6"><label class="rf-form-label">URL</label><input type="text" name="proj_url[]" class="rf-form-control" placeholder="github.com/yourproject"/></div>
+                  <div class="col-12"><label class="rf-form-label">Description</label><textarea name="proj_desc[]" class="rf-form-control" rows="2" placeholder="Built with React and Django..."></textarea></div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <button type="button" id="addProj" class="btn-add-entry"><i class="fa-solid fa-plus me-2"></i>Add Another Project</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Certifications -->
+      <div id="step-5" class="builder-step" style="display:none;">
+        <div class="builder-section">
+          <h4><i class="fa-solid fa-certificate"></i> Certifications</h4>
+          <div id="certList">
+            {% if editing and resume.get_certifications %}
+              {% for c in resume.get_certifications %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-4"><label class="rf-form-label">Certification Name</label><input type="text" name="cert_name[]" class="rf-form-control" value="{{ c.name }}"/></div>
+                  <div class="col-md-4"><label class="rf-form-label">Issuer</label><input type="text" name="cert_issuer[]" class="rf-form-control" value="{{ c.issuer }}"/></div>
+                  <div class="col-md-4"><label class="rf-form-label">Date</label><input type="text" name="cert_date[]" class="rf-form-control" value="{{ c.date }}"/></div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="entry-block">
+                <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+                  <div class="col-md-4"><label class="rf-form-label">Certification Name</label><input type="text" name="cert_name[]" class="rf-form-control" placeholder="AWS Certified Developer"/></div>
+                  <div class="col-md-4"><label class="rf-form-label">Issuer</label><input type="text" name="cert_issuer[]" class="rf-form-control" placeholder="Amazon Web Services"/></div>
+                  <div class="col-md-4"><label class="rf-form-label">Date</label><input type="text" name="cert_date[]" class="rf-form-control" placeholder="2023"/></div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <button type="button" id="addCert" class="btn-add-entry"><i class="fa-solid fa-plus me-2"></i>Add Another Certification</button>
+          <div style="margin-top:2rem;padding:1.5rem;background:rgba(245,166,35,0.06);border-radius:12px;border:1px solid rgba(245,166,35,0.2);">
+            <h5 style="margin-bottom:8px;"><i class="fa-solid fa-check-circle text-saffron me-2"></i>Almost done!</h5>
+            <p style="color:var(--muted);font-size:0.85rem;margin:0;">Review your information and click "Save Resume" to save it to your account. You can download it as PDF from your dashboard.</p>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const steps = document.querySelectorAll('.builder-step');
+const TOTAL = steps.length;
+let current = 0;
+
+function showStep(n) {
+  steps.forEach((s, i) => s.style.display = i === n ? '' : 'none');
+  document.getElementById('progressLabel').textContent = `Step ${n+1} of ${TOTAL}`;
+  document.getElementById('builderProgress').style.width = `${((n+1)/TOTAL)*100}%`;
+  document.getElementById('btnPrev').disabled = n === 0;
+  document.getElementById('btnNext').style.display = n < TOTAL-1 ? '' : 'none';
+  document.getElementById('btnSubmit').style.display = n === TOTAL-1 ? '' : 'none';
+}
+
+document.getElementById('btnNext').addEventListener('click', () => { if (current < TOTAL-1) showStep(++current); });
+document.getElementById('btnPrev').addEventListener('click', () => { if (current > 0) showStep(--current); });
+document.getElementById('btnSubmit').addEventListener('click', () => document.getElementById('resumeBuilderForm').submit());
+
+showStep(0);
+
+function addEntry(containerId, html) {
+  const container = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = 'entry-block';
+  div.innerHTML = html;
+  container.appendChild(div);
+}
+
+document.getElementById('addEdu').addEventListener('click', () => addEntry('eduList', `
+  <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+    <div class="col-md-6"><label class="rf-form-label">School/University</label><input type="text" name="edu_school[]" class="rf-form-control" placeholder="MIT"/></div>
+    <div class="col-md-6"><label class="rf-form-label">Degree</label><input type="text" name="edu_degree[]" class="rf-form-control"/></div>
+    <div class="col-md-6"><label class="rf-form-label">Year</label><input type="text" name="edu_year[]" class="rf-form-control"/></div>
+    <div class="col-md-6"><label class="rf-form-label">GPA</label><input type="text" name="edu_gpa[]" class="rf-form-control"/></div>
+  </div>`));
+
+document.getElementById('addExp').addEventListener('click', () => addEntry('expList', `
+  <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+    <div class="col-md-6"><label class="rf-form-label">Company</label><input type="text" name="exp_company[]" class="rf-form-control"/></div>
+    <div class="col-md-6"><label class="rf-form-label">Role</label><input type="text" name="exp_role[]" class="rf-form-control"/></div>
+    <div class="col-12"><label class="rf-form-label">Dates</label><input type="text" name="exp_dates[]" class="rf-form-control"/></div>
+    <div class="col-12"><label class="rf-form-label">Description</label><textarea name="exp_desc[]" class="rf-form-control" rows="3"></textarea></div>
+  </div>`));
+
+document.getElementById('addProj').addEventListener('click', () => addEntry('projList', `
+  <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+    <div class="col-md-6"><label class="rf-form-label">Project Name</label><input type="text" name="proj_name[]" class="rf-form-control"/></div>
+    <div class="col-md-6"><label class="rf-form-label">URL</label><input type="text" name="proj_url[]" class="rf-form-control"/></div>
+    <div class="col-12"><label class="rf-form-label">Description</label><textarea name="proj_desc[]" class="rf-form-control" rows="2"></textarea></div>
+  </div>`));
+
+document.getElementById('addCert').addEventListener('click', () => addEntry('certList', `
+  <div class="row g-2 mb-3 p-3" style="background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07)">
+    <div class="col-md-4"><label class="rf-form-label">Name</label><input type="text" name="cert_name[]" class="rf-form-control"/></div>
+    <div class="col-md-4"><label class="rf-form-label">Issuer</label><input type="text" name="cert_issuer[]" class="rf-form-control"/></div>
+    <div class="col-md-4"><label class="rf-form-label">Date</label><input type="text" name="cert_date[]" class="rf-form-control"/></div>
+  </div>`));
+</script>
+{% endblock %}

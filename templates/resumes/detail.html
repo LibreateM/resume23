@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}{{ resume.title }} – ResumeForge{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <span class="eyebrow">{{ resume.get_template_display }} Template{% if resume.is_ai_generated %} • AI Generated{% endif %}</span>
+        <h1 class="mt-1">{{ resume.title }}</h1>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'download_pdf' resume.pk %}" class="btn btn-rf-primary"><i class="fa-solid fa-file-pdf me-2"></i>Download PDF</a>
+        <a href="{% url 'ats_checker' %}?resume={{ resume.pk }}" class="btn btn-rf-outline"><i class="fa-solid fa-chart-bar me-2"></i>Check ATS</a>
+        <a href="{% url 'resume_edit' resume.pk %}" class="btn btn-rf-outline"><i class="fa-solid fa-pen me-2"></i>Edit</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-rf-outline"><i class="fa-solid fa-arrow-left me-2"></i>Dashboard</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad-sm">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Resume Preview -->
+      <div class="col-lg-8">
+        <div class="rf-card" style="padding:2.5rem;background:white;color:#1a202c;min-height:800px;">
+          <!-- Header -->
+          <div style="{% if resume.template == 'modern' %}background:#0d1b2a;padding:2rem;margin:-2.5rem -2.5rem 1.5rem;{% elif resume.template == 'executive' %}border-bottom:3px solid #f5a623;padding-bottom:1.5rem;margin-bottom:1.5rem;{% else %}text-align:center;border-bottom:2px solid #f5a623;padding-bottom:1.5rem;margin-bottom:1.5rem;{% endif %}">
+            <h2 style="font-size:1.8rem;margin-bottom:4px;{% if resume.template == 'modern' %}color:white;{% else %}color:#0d1b2a;{% endif %}">{{ resume.full_name }}</h2>
+            {% if resume.job_title %}<div style="font-size:1rem;color:#f5a623;margin-bottom:8px;">{{ resume.job_title }}</div>{% endif %}
+            <div style="font-size:0.82rem;{% if resume.template == 'modern' %}color:#8fa0b3;{% else %}color:#718096;{% endif %}">
+              {% if resume.email %}<span>{{ resume.email }}</span>{% endif %}
+              {% if resume.phone %} | <span>{{ resume.phone }}</span>{% endif %}
+              {% if resume.location %} | <span>{{ resume.location }}</span>{% endif %}
+              {% if resume.linkedin %} | <span>{{ resume.linkedin }}</span>{% endif %}
+            </div>
+          </div>
+
+          {% if resume.summary %}
+          <div style="margin-bottom:1.5rem;">
+            <h4 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#f5a623;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">Professional Summary</h4>
+            <p style="font-size:0.88rem;line-height:1.7;color:#2d3748;">{{ resume.summary }}</p>
+          </div>
+          {% endif %}
+
+          {% with resume.get_experience as exp_list %}{% if exp_list %}
+          <div style="margin-bottom:1.5rem;">
+            <h4 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#f5a623;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">Work Experience</h4>
+            {% for exp in exp_list %}
+            <div style="margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <strong style="color:#0d1b2a;">{{ exp.role }} — {{ exp.company }}</strong>
+                <span style="font-size:0.78rem;color:#718096;white-space:nowrap;margin-left:8px;">{{ exp.dates }}</span>
+              </div>
+              <div style="font-size:0.83rem;color:#4a5568;margin-top:4px;white-space:pre-line;">{{ exp.description }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}{% endwith %}
+
+          {% with resume.get_education as edu_list %}{% if edu_list %}
+          <div style="margin-bottom:1.5rem;">
+            <h4 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#f5a623;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">Education</h4>
+            {% for edu in edu_list %}
+            <div style="margin-bottom:8px;">
+              <strong style="color:#0d1b2a;">{{ edu.school }}</strong>
+              <span style="color:#718096;font-size:0.85rem;"> — {{ edu.degree }}{% if edu.year %}, {{ edu.year }}{% endif %}{% if edu.gpa %} | GPA: {{ edu.gpa }}{% endif %}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}{% endwith %}
+
+          {% with resume.get_skills as skills %}{% if skills %}
+          <div style="margin-bottom:1.5rem;">
+            <h4 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#f5a623;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">Skills</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              {% for skill in skills %}
+              <span style="background:#edf2f7;color:#2d3748;padding:3px 10px;border-radius:20px;font-size:0.8rem;">{{ skill }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}{% endwith %}
+
+          {% with resume.get_projects as proj_list %}{% if proj_list %}
+          <div style="margin-bottom:1.5rem;">
+            <h4 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#f5a623;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">Projects</h4>
+            {% for p in proj_list %}
+            <div style="margin-bottom:8px;">
+              <strong style="color:#0d1b2a;">{{ p.name }}</strong>{% if p.url %} <span style="color:#718096;font-size:0.8rem;">({{ p.url }})</span>{% endif %}
+              {% if p.description %}<div style="font-size:0.83rem;color:#4a5568;margin-top:2px;">{{ p.description }}</div>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}{% endwith %}
+
+          {% with resume.get_certifications as cert_list %}{% if cert_list %}
+          <div>
+            <h4 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#f5a623;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">Certifications</h4>
+            {% for c in cert_list %}
+            <div style="margin-bottom:5px;font-size:0.85rem;color:#2d3748;"><strong>{{ c.name }}</strong>{% if c.issuer %} — {{ c.issuer }}{% endif %}{% if c.date %} ({{ c.date }}){% endif %}</div>
+            {% endfor %}
+          </div>
+          {% endif %}{% endwith %}
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <div class="rf-card mb-3">
+          <h5 style="margin-bottom:1rem;"><i class="fa-solid fa-info-circle text-saffron me-2"></i>Resume Info</h5>
+          <div style="font-size:0.83rem;color:var(--muted);">
+            <div class="d-flex justify-content-between mb-2"><span>Template</span><strong style="color:var(--white)">{{ resume.get_template_display }}</strong></div>
+            <div class="d-flex justify-content-between mb-2"><span>Created</span><strong style="color:var(--white)">{{ resume.created_at|date:"M d, Y" }}</strong></div>
+            <div class="d-flex justify-content-between mb-2"><span>Updated</span><strong style="color:var(--white)">{{ resume.updated_at|date:"M d, Y" }}</strong></div>
+            {% if resume.is_ai_generated %}<div class="d-flex justify-content-between"><span>Source</span><strong style="color:var(--saffron)">AI Generated</strong></div>{% endif %}
+          </div>
+        </div>
+        <div class="rf-card mb-3">
+          <h5 style="margin-bottom:1rem;"><i class="fa-solid fa-download text-saffron me-2"></i>Download PDF</h5>
+          <p style="color:var(--muted);font-size:0.82rem;margin-bottom:1rem;">Download your resume as a professional PDF ready to send to employers.</p>
+          <a href="{% url 'download_pdf' resume.pk %}" class="btn btn-rf-primary w-100"><i class="fa-solid fa-file-pdf me-2"></i>Download as PDF</a>
+        </div>
+        <div class="rf-card mb-3">
+          <h5 style="margin-bottom:1rem;"><i class="fa-solid fa-chart-bar text-saffron me-2"></i>Check ATS Score</h5>
+          <p style="color:var(--muted);font-size:0.82rem;margin-bottom:1rem;">Analyze this resume against a job description to get your ATS compatibility score.</p>
+          <a href="{% url 'ats_checker' %}?resume={{ resume.pk }}" class="btn btn-rf-outline w-100"><i class="fa-solid fa-chart-bar me-2"></i>Check ATS Score</a>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{% url 'resume_edit' resume.pk %}" class="btn btn-rf-outline flex-fill"><i class="fa-solid fa-pen me-1"></i>Edit</a>
+          <form method="post" action="{% url 'resume_delete' resume.pk %}" onsubmit="return confirm('Delete this resume?')">
+            {% csrf_token %}
+            <button type="submit" class="btn" style="background:rgba(255,107,107,0.1);color:#ff6b6b;border:1px solid rgba(255,107,107,0.3);border-radius:var(--radius);padding:8px 16px;"><i class="fa-solid fa-trash me-1"></i>Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
