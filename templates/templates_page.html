@@ -9,26 +9,73 @@
     <p style="color:var(--muted);margin-top:0.8rem;">4 beautifully designed templates. All ATS-compatible and downloadable as PDF.</p>
   </div>
 </section>
+
 <section class="section-pad">
   <div class="container">
     <div class="row g-4">
-      {% for tpl in "Classic,clean-professional-resume,Professional navy & saffron design. Clean layout with clear sections. Best for traditional industries.|Modern,modern-resume,Bold header with navy background. Contemporary style for tech & creative roles.|Minimal,minimal-resume,Clean white design with elegant typography. Perfect for designers & writers.|Executive,executive-resume,Two-column layout with navy sidebar. Ideal for senior professionals." | split:"|" %}
+
       <div class="col-md-6 col-lg-3">
         <div class="rf-card h-100 text-center">
           <div style="background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));border-radius:10px;padding:1.5rem;margin-bottom:1rem;min-height:160px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
             <div>
               <div style="font-size:2rem;color:var(--saffron);margin-bottom:8px;"><i class="fa-solid fa-file-lines"></i></div>
-              <div style="font-weight:700;color:var(--white);">{{ tpl.split(","|first }}</div>
+              <div style="font-weight:700;color:var(--white);">Classic</div>
               <div style="font-size:0.75rem;color:var(--muted);">Template</div>
             </div>
           </div>
-          <h5>{{ tpl.split(","|first }}</h5>
-          <p style="color:var(--muted);font-size:0.82rem;">{{ tpl.split(",").2 }}</p>
+          <h5>Classic</h5>
+          <p style="color:var(--muted);font-size:0.82rem;">Professional navy & saffron design. Clean layout with clear sections. Best for traditional industries.</p>
           <a href="{% url 'builder' %}" class="btn btn-rf-primary btn-sm w-100 mt-auto"><i class="fa-solid fa-pen-to-square me-1"></i>Use This Template</a>
         </div>
       </div>
-      {% endfor %}
+
+      <div class="col-md-6 col-lg-3">
+        <div class="rf-card h-100 text-center">
+          <div style="background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));border-radius:10px;padding:1.5rem;margin-bottom:1rem;min-height:160px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
+            <div>
+              <div style="font-size:2rem;color:var(--saffron);margin-bottom:8px;"><i class="fa-solid fa-file-lines"></i></div>
+              <div style="font-weight:700;color:var(--white);">Modern</div>
+              <div style="font-size:0.75rem;color:var(--muted);">Template</div>
+            </div>
+          </div>
+          <h5>Modern</h5>
+          <p style="color:var(--muted);font-size:0.82rem;">Bold header with navy background. Contemporary style for tech & creative roles.</p>
+          <a href="{% url 'builder' %}" class="btn btn-rf-primary btn-sm w-100 mt-auto"><i class="fa-solid fa-pen-to-square me-1"></i>Use This Template</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="rf-card h-100 text-center">
+          <div style="background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));border-radius:10px;padding:1.5rem;margin-bottom:1rem;min-height:160px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
+            <div>
+              <div style="font-size:2rem;color:var(--saffron);margin-bottom:8px;"><i class="fa-solid fa-file-lines"></i></div>
+              <div style="font-weight:700;color:var(--white);">Minimal</div>
+              <div style="font-size:0.75rem;color:var(--muted);">Template</div>
+            </div>
+          </div>
+          <h5>Minimal</h5>
+          <p style="color:var(--muted);font-size:0.82rem;">Clean white design with elegant typography. Perfect for designers & writers.</p>
+          <a href="{% url 'builder' %}" class="btn btn-rf-primary btn-sm w-100 mt-auto"><i class="fa-solid fa-pen-to-square me-1"></i>Use This Template</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="rf-card h-100 text-center">
+          <div style="background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));border-radius:10px;padding:1.5rem;margin-bottom:1rem;min-height:160px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">
+            <div>
+              <div style="font-size:2rem;color:var(--saffron);margin-bottom:8px;"><i class="fa-solid fa-file-lines"></i></div>
+              <div style="font-weight:700;color:var(--white);">Executive</div>
+              <div style="font-size:0.75rem;color:var(--muted);">Template</div>
+            </div>
+          </div>
+          <h5>Executive</h5>
+          <p style="color:var(--muted);font-size:0.82rem;">Two-column layout with navy sidebar. Ideal for senior professionals.</p>
+          <a href="{% url 'builder' %}" class="btn btn-rf-primary btn-sm w-100 mt-auto"><i class="fa-solid fa-pen-to-square me-1"></i>Use This Template</a>
+        </div>
+      </div>
+
     </div>
+
     <div class="text-center mt-5">
       <p style="color:var(--muted);margin-bottom:1.5rem;">Not sure which template to use? Let our AI pick the best one for your role.</p>
       <a href="{% url 'ai_builder' %}" class="btn btn-rf-primary btn-lg"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Use AI Builder</a>
