@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import ATSCheck
 from resumes.models import Resume
-from openai import OpenAI
+from groq import Groq
 from django.conf import settings
 import json, re
 
@@ -28,7 +28,7 @@ def extract_text_from_pdf(pdf_file):
 
 
 def analyze_with_gemini(resume_text, job_description):
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    client = Groq(api_key=settings.GROQ_API_KEY)
 
     prompt = f"""
 You are an expert ATS (Applicant Tracking System) analyzer. Analyze the following resume.
@@ -66,7 +66,7 @@ Score based on: keyword matching, completeness, action verbs, quantified achieve
 """
 
     response = client.chat.completions.create(
-        model='gpt-4o-mini',
+        model='llama-3.3-70b-versatile',
         messages=[
             {"role": "user", "content": prompt}
         ],
