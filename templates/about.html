@@ -6,9 +6,10 @@
   <div class="container">
     <span class="eyebrow">Our Story</span>
     <h1 class="mt-2">About <span style="color:var(--saffron)">ResumeForge</span></h1>
-    <p style="color:var(--muted);max-width:540px;margin-top:0.8rem;">We help job seekers build stunning, ATS-optimized resumes using the power of Google Gemini AI.</p>
+    <p style="color:var(--muted);max-width:540px;margin-top:0.8rem;">We help job seekers build stunning, ATS-optimized resumes using the power of AI.</p>
   </div>
 </section>
+
 <section class="section-pad">
   <div class="container">
     <div class="row g-5 align-items-center mb-5">
@@ -17,40 +18,68 @@
         <h2 class="mt-2">Democratizing <em style="color:var(--saffron)">Career Success</em></h2>
         <p style="color:var(--muted);">Every job seeker deserves a professional resume. ResumeForge combines beautiful design with AI intelligence to help you stand out in any job market.</p>
         <ul style="list-style:none;padding:0;">
-         {% for point in features %}
-    {{ point }}
-{% endfor %}
-          <li style="display:flex;align-items:center;gap:10px;margin-bottom:10px;color:var(--muted);font-size:0.9rem;"><i class="fa-solid fa-check-circle" style="color:#48c78e;"></i>{{ point }}</li>
+          {% for point in features %}
+          <li style="display:flex;align-items:center;gap:10px;margin-bottom:10px;color:var(--muted);font-size:0.9rem;">
+            <i class="fa-solid fa-check-circle" style="color:#48c78e;"></i>{{ point }}
+          </li>
           {% endfor %}
         </ul>
       </div>
+
       <div class="col-lg-5 offset-lg-1">
         <div class="row g-3">
-          {% for stat in "50K+,Resumes Created|94%,Success Rate|4.9★,User Rating|20+,ATS Factors" | split:"|" %}
           <div class="col-6">
             <div class="rf-card text-center">
-              <div style="font-size:2rem;font-weight:800;color:var(--saffron);">{{ stat.split:","|first }}</div>
-              <div style="color:var(--muted);font-size:0.82rem;">{{ stat.split(","|last }}</div>
+              <div style="font-size:2rem;font-weight:800;color:var(--saffron);">50K+</div>
+              <div style="color:var(--muted);font-size:0.82rem;">Resumes Created</div>
             </div>
           </div>
-          {% endfor %}
+          <div class="col-6">
+            <div class="rf-card text-center">
+              <div style="font-size:2rem;font-weight:800;color:var(--saffron);">94%</div>
+              <div style="color:var(--muted);font-size:0.82rem;">Success Rate</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="rf-card text-center">
+              <div style="font-size:2rem;font-weight:800;color:var(--saffron);">4.9★</div>
+              <div style="color:var(--muted);font-size:0.82rem;">User Rating</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="rf-card text-center">
+              <div style="font-size:2rem;font-weight:800;color:var(--saffron);">20+</div>
+              <div style="color:var(--muted);font-size:0.82rem;">ATS Factors</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="row g-4">
-      <!-- home.html mein -->
-{% for point in features %}
-    <li>{{ point }}</li>
-{% endfor %}
       <div class="col-md-4">
         <div class="rf-card text-center h-100">
-          <div class="feature-icon mx-auto"><i class="fa-solid {{ t.split(","|last }}"></i></div>
-          <h5>{{ t.split(","|first }}</h5>
-          <p style="color:var(--muted);font-size:0.85rem;">{{ t.split(",").1 }}</p>
+          <div class="feature-icon mx-auto"><i class="fa-solid fa-pen-to-square"></i></div>
+          <h5>Resume Builder</h5>
+          <p style="color:var(--muted);font-size:0.85rem;">Build step-by-step with live preview. Add education, experience, skills, projects and download as PDF.</p>
         </div>
       </div>
-      {% endfor %}
+      <div class="col-md-4">
+        <div class="rf-card text-center h-100">
+          <div class="feature-icon mx-auto"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h5>AI Builder</h5>
+          <p style="color:var(--muted);font-size:0.85rem;">AI generates complete tailored resumes in seconds. Just enter your role and skills.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="rf-card text-center h-100">
+          <div class="feature-icon mx-auto"><i class="fa-solid fa-chart-bar"></i></div>
+          <h5>ATS Checker</h5>
+          <p style="color:var(--muted);font-size:0.85rem;">Upload or paste your resume to get an instant ATS compatibility score with detailed AI feedback.</p>
+        </div>
+      </div>
     </div>
+
   </div>
 </section>
 {% endblock %}
