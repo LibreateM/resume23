@@ -22,7 +22,6 @@ def about(request):
         "Secure account with full history",
     ]
     return render(request, 'about.html',{'features': features})
-
 def contact(request):
     if request.method == 'POST':
         messages.success(request, "Thanks for contacting us! We'll get back to you soon.")
