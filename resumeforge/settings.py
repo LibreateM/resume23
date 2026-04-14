@@ -78,8 +78,7 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 SESSION_COOKIE_AGE = 86400
 
 import django.contrib.messages as _msg
