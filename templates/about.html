@@ -36,7 +36,10 @@
       </div>
     </div>
     <div class="row g-4">
-      {% for t in "Resume Builder,Build step-by-step with live preview. Add education, experience, skills, projects and download as PDF.,fa-pen-to-square|AI Builder,Google Gemini AI generates complete tailored resumes in seconds. Just enter your role and skills.,fa-wand-magic-sparkles|ATS Checker,Upload or paste your resume to get an instant ATS compatibility score with detailed AI feedback.,fa-chart-bar" | split:"|" %}
+      <!-- home.html mein -->
+{% for point in features %}
+    <li>{{ point }}</li>
+{% endfor %}
       <div class="col-md-4">
         <div class="rf-card text-center h-100">
           <div class="feature-icon mx-auto"><i class="fa-solid {{ t.split(","|last }}"></i></div>
