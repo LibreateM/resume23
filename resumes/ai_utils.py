@@ -1,11 +1,11 @@
-from openai import OpenAI
+from groq import Groq
 import json
 import re
 from django.conf import settings
 
 
 def generate_ai_resume(job_role, skills, experience_years, education, extra_info):
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    client = Groq(api_key=settings.GROQ_API_KEY)
 
     prompt = f"""
 You are a professional resume writer. Create a complete, ATS-optimized resume in JSON format.
@@ -56,7 +56,7 @@ Make it realistic, professional, and tailored for {job_role}. Include 2-3 experi
 """
 
     response = client.chat.completions.create(
-        model='gpt-4o-mini',
+        model='llama-3.3-70b-versatile',
         messages=[
             {"role": "user", "content": prompt}
         ],
