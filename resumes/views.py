@@ -14,7 +14,7 @@ def home(request):
     return render(request, 'home.html')
 
 def about(request):
-        features = [
+    features = [
         "AI-powered content generation",
         "ATS compatibility analysis and scoring", 
         "4 professional PDF templates",
