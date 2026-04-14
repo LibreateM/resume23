@@ -11,7 +11,14 @@ from .ai_utils import generate_ai_resume
 
 
 def home(request):
-    return render(request, 'home.html')
+    features = [
+        "AI-powered content generation",
+        "ATS compatibility analysis and scoring", 
+        "4 professional PDF templates",
+        "User dashboard to manage all resumes",
+        "Secure account with full history",
+    ]
+    return render(request, 'home.html', {'features': features})
 
 def about(request):
     return render(request, 'about.html')
